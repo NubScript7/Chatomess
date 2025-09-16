@@ -1,0 +1,32 @@
+{
+  "name": "chatomess",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "axios-retry": "^4.5.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ghost-cursor": "^1.4.1",
+    "puppeteer": "^24.2.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "user-agents": "^1.1.531"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/user-agents": "^1.0.4",
+    "typescript": "^5.7.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./dist/index",
+    "build": "tsc",
+    "dev": "nodemon --ext \"ts\" --watch \"./src/**/*\" --exec \"npm run launch\"",
+    "launch": "npm run build && npm start"
+  },
+  "keywords": [],
+  "author": "NubScript7",
+  "license": "MIT",
+  "description": ""
+}
