@@ -4,6 +4,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { log } from "node:console";
 import EventEmitter from "node:events";
 import { initChatExtractor } from "./chatExtractor";
+import { evalBool } from "../common/checks";
 config()
 
 const CONSTANTS = {
@@ -22,12 +23,19 @@ if(!CONSTANTS.MESSENGER_EMAILORPHONE || !CONSTANTS.MESSENGER_PASSWORD || !CONSTA
     throw new Error("the required email/phone or password environment string is undefined.")
 }
 
+export function readEnvCookiesCredentials() {
+    const base64 = process.env.PUPPETEER_CHATGPT_COOKIE || 'W10='
+    const cookies = Buffer.from(base64, 'base64').toString('utf8')
+    return cookies
+}
+
 export class ChatGPTApp {
     static chatgpt: ChatGPTPage
     static event: EventEmitter = new EventEmitter()
     static async init() {
     
-        const cookieTxt = await readFile(CONSTANTS.CHATGPT_COOKIES_FILE, { encoding: "utf-8" })
+        const cookieTxt = evalBool(process.env.PUPPETEER_USE_ENV_COOKIES) ? readEnvCookiesCredentials() : await readFile(CONSTANTS.CHATGPT_COOKIES_FILE, { encoding: "utf-8" })
+        
         const chatgptCookies = JSON.parse(cookieTxt)
 
         const chatgptManager = new ChatgptPageManager()
