@@ -77,6 +77,7 @@ export class ChatGPTPage {
     browser: PuppeteerBrowser
     constructor(p: Page) {
         this.page = p
+        this.page.setDefaultNavigationTimeout(5 * 60 * 1000)
         this.browser = p.browser()
     }
 
