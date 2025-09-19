@@ -1,7 +1,7 @@
 import { Page } from "puppeteer";
 import { Browser } from "../browser";
-import { MessengerPageError } from "../common/errors/messenger";
-import { waitForAsync } from "../common/timer";
+import { MessengerPageError } from "../../common/errors";
+import { waitForAsync } from "../../common/timer";
 import UserAgent from "user-agents";
 import { createCursor } from "ghost-cursor"
 

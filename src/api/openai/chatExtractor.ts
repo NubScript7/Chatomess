@@ -1,5 +1,5 @@
 import { Page } from "puppeteer";
-import { parseSSE, extractData } from "../common/parseText";
+import { parseSSE, extractData } from "../../common/parseText";
 import { ChatGPTApp } from ".";
 
 export const initChatExtractor = async (page: Page) => {

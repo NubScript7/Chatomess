@@ -1,6 +1,8 @@
 export class Storage {
     static #blobs = {} as Record<string, Blob>
     static pageScreen: Blob | undefined = undefined
+    static pageScreenshot: Blob | undefined = undefined
+
 
     static saveBlob(blob: Blob) {
         const id = crypto.randomUUID()

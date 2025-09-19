@@ -4,7 +4,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { log } from "node:console";
 import EventEmitter from "node:events";
 import { initChatExtractor } from "./chatExtractor";
-import { evalBool } from "../common/checks";
+import { evalBool } from "../../common/checks";
 config()
 
 const CONSTANTS = {

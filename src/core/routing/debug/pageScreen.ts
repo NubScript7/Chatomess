@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Storage } from "../../../api/common/storage";
+import { Storage } from "../../../common/storage";
 import { ChatGPTApp } from "../../../api/openai";
 
 export const pageScreenViewer = async (req: Request, res: Response) => {

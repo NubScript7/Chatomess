@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ChatGPTApp } from "../../../../api/openai";
 import { FBSendApi } from "../../../../api/axios";
+import { Storage } from "../../../../common/storage";
 
 export type messageBodyEntryMessagingMessage = {
     mid: string,
@@ -38,8 +39,7 @@ export const messageHandler = async (req: Request, res: Response) => {
 
     for(const { messaging } of entry) {
         if(messaging && !Array.isArray(messaging)) {
-            res.sendStatus(403)
-            return
+            return res.sendStatus(403)
         }
 
         for(const { message, sender } of messaging) {
@@ -48,13 +48,21 @@ export const messageHandler = async (req: Request, res: Response) => {
                 console.log(`Received message from: ${sender.id}; message: ${message.text}`);
             }
 
-            const result = await ChatGPTApp.chatgpt.typeQuestion(message.text)
-            console.log("Result got:", result);
-            
+            if(ChatGPTApp.initialized) {
+                if(ChatGPTApp.chatgpt.inProgress) {
+                    console.log("Waiting for previous request, ignoring this message...");
+                    return res.sendStatus(200)
+                }
 
-            FBSendApi.sendMessage(sender.id, result)
-            // FBSendApi.sendMessage(sender.id, `Message received. ${new Date().toISOString()}`)
-            res.sendStatus(200)
+                await FBSendApi.sendMessage(sender.id, "Thinking...⏳")
+
+                const result = await ChatGPTApp.chatgpt.typeQuestion(message.text)   
+
+                FBSendApi.sendMessageDynamic(sender.id, result)
+                res.sendStatus(200)
+            } else {
+                res.sendStatus(403)
+            }
         }
     }
 }

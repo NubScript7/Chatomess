@@ -1,10 +1,10 @@
 import _puppeteer, { Browser as PuppeteerBrowser, LaunchOptions, Page } from "puppeteer"
 import _StealthPlugin from "puppeteer-extra-plugin-stealth"
 import { addExtra } from "puppeteer-extra"
-import { chromiumFlags } from "./common/flags";
-import { evalBool } from "./common/checks";
-import { generateId } from "./common/generate";
-import { BrowserError } from "./common/errors/browser";
+import { chromiumFlags } from "../common/flags";
+import { evalBool } from "../common/checks";
+import { generateId } from "../common/generate";
+import { BrowserError } from "../common/errors";
 
 export const puppeteer = addExtra(_puppeteer);
 puppeteer.use(_StealthPlugin())
