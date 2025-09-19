@@ -32,6 +32,12 @@ export function readEnvCookiesCredentials() {
 export class ChatGPTApp {
     static chatgpt: ChatGPTPage
     static event: EventEmitter = new EventEmitter()
+    static #initilazed: boolean
+
+    static get initialized() {
+        return this.#initilazed && this.chatgpt.initialized
+    }
+
     static async init() {
     
         const cookieTxt = evalBool(process.env.PUPPETEER_USE_ENV_COOKIES) ? readEnvCookiesCredentials() : await readFile(CONSTANTS.CHATGPT_COOKIES_FILE, { encoding: "utf-8" })
@@ -65,5 +71,6 @@ export class ChatGPTApp {
         await initChatExtractor(page.page)
 
         ChatGPTApp.chatgpt = page
+        this.#initilazed = true
     }
 }

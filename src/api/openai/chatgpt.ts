@@ -6,6 +6,7 @@ import { waitForAsync } from "../common/timer"
 import { Cookie } from "puppeteer"
 import { configDotenv } from "dotenv"
 import { ChatGPTApp } from "."
+import { Storage } from "../common/storage"
 
 configDotenv()
 
@@ -75,10 +76,16 @@ function numberRng(min: number, max: number) {
 export class ChatGPTPage {
     page: Page
     browser: PuppeteerBrowser
+    #initialized: boolean
     constructor(p: Page) {
         this.page = p
         this.page.setDefaultNavigationTimeout(5 * 60 * 1000)
         this.browser = p.browser()
+        this.#initialized = false
+    }
+
+    get initialized() {
+        return this.#initialized
     }
 
     get isUrlMessenger() {
@@ -89,10 +96,34 @@ export class ChatGPTPage {
         this.browser.setCookie(...cookies)
     }
 
+    takeScreenshot() {
+        if(!this.#initialized)
+            throw new Error("Page not yet initialized")
+
+        const id = crypto.randomUUID()
+        ChatGPTApp.event.emit("take_screenshot", id)
+        return new Promise<string>(resolve =>
+            ChatGPTApp.event.once(`screenshot_${id}`, resolve)
+        )
+    }
+
     async initSession() {
         await this.page.goto(CONSTANTS.CHATGPT_URL, {
-            waitUntil: "networkidle2"
+            waitUntil: "domcontentloaded"
         })
+        const screenshot = await this.page.screenshot()
+        const blob = new Blob([Buffer.from(screenshot)], { type: "application/octet-stream" })
+        Storage.pageScreen = blob
+
+        ChatGPTApp.event.on("take_screenshot", async (reqId: string) => {
+            const screenshot = await this.page.screenshot()
+            const blob = new Blob([Buffer.from(screenshot)], { type: "application/octet-stream" })
+
+            const blobId = Storage.saveBlob(blob)
+            ChatGPTApp.event.emit(`screenshot_${reqId}`, blobId)
+        })
+
+        this.#initialized = true
     }
 
     async typeQuestion(question: string) {
