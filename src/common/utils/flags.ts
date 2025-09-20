@@ -26,3 +26,5 @@ export const chromiumFlags = [
     '--disable-renderer-backgrounding',
     '--enable-features=NetworkService,NetworkServiceInProcess'
 ]
+
+export default chromiumFlags

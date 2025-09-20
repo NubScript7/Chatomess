@@ -7,3 +7,5 @@ import { setTimeout } from "node:timers/promises";
 export function waitForAsync(ms: number) {
     return setTimeout(ms)
 }
+
+export default waitForAsync

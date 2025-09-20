@@ -1,22 +1,44 @@
-import axios from "axios"
-import chunkify from "../../common/chunkify";
+import axios, { AxiosError } from "axios"
+import chunkify from "../../common/utils/chunkify";
+import logger, { smartLogger } from "../../common/utils/logger";
+
 
 const CONSTANTS = {
-    FB_GRAPH_API_URL : "https://graph.facebook.com/v23.0/me"
+    FB_GRAPH_API_URL : "https://graph.facebook.com/v23.0"
 }
 
 export class FBSendApi {
-    static axiosPostInstance = axios.create({
+    static axiosInstance = axios.create({
         baseURL: CONSTANTS.FB_GRAPH_API_URL,
-        method: "POST",
         params: {
             access_token: process.env.FB_PAGE_ACCESS_TOKEN
         }
     })
 
+    static async getUserFromPsid(recipientId: string) {
+        try {
+            const response = await this.axiosInstance.get(
+                `/${recipientId}`,
+                {
+                    params: {
+                        fields: "id",
+                    }
+                }
+            )
+
+            if(response.data?.id == recipientId) {
+                return true
+            } else {
+                return false
+            }
+        } catch(error) {
+            return false;
+        }
+    }
+
     static async sendMessage(recipientId: string, message: string) {
         try {
-            await this.axiosPostInstance.post("/messages",
+            await this.axiosInstance.post("/me/messages",
                 {
                     recipient: {
                         id: recipientId
@@ -26,7 +48,7 @@ export class FBSendApi {
                     }
                 })
         } catch(error) {
-            console.log(error);
+            smartLogger(error);
         }
     }
 
@@ -34,11 +56,12 @@ export class FBSendApi {
         for(const message of messages) {
             try {
                 await this.sendMessage(recipientId, message)
-            } catch (e: any) {
+            } catch (err: any) {
+                smartLogger(err)
                 
                 this.sendMessage(recipientId, "Failed to send this message 😢")
-                .catch((e) => {
-                    console.log(e);
+                .catch((err) => {
+                    smartLogger(err);
                 })
             }
         }
@@ -58,3 +81,4 @@ export class FBSendApi {
     }
 }
 
+export default FBSendApi

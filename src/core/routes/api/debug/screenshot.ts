@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { ChatGPTApp } from "../../../api/openai";
-import { Storage } from "../../../common/storage";
+import { Storage } from "../../../../common/utils/storage";
+import { ChatGPTApp } from "../../../../api/openai";
 
 // send a request here to take a screen shot
 export const screenshotHandler = async (req: Request, res: Response) => {
@@ -13,3 +13,5 @@ export const screenshotHandler = async (req: Request, res: Response) => {
         res.status(403).send("App not yet initialized")
     }
 }
+
+export default screenshotHandler

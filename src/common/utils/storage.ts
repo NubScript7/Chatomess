@@ -17,3 +17,5 @@ export class Storage {
         return blob
     }
 }
+
+export default Storage

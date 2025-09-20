@@ -2,11 +2,12 @@ import { Page, ScreenshotOptions } from "puppeteer"
 import { Browser } from "../browser"
 import { Browser as PuppeteerBrowser } from "puppeteer"
 import UserAgent from "user-agents"
-import { waitForAsync } from "../../common/timer"
+import { waitForAsync } from "../../common/utils/timer"
 import { Cookie } from "puppeteer"
 import { configDotenv } from "dotenv"
 import { ChatGPTApp } from "."
-import { Storage } from "../../common/storage"
+import { Storage } from "../../common/utils/storage"
+import logger from "../../common/utils/logger"
 
 configDotenv()
 
@@ -115,6 +116,9 @@ export class ChatGPTPage {
         await this.page.goto(CONSTANTS.CHATGPT_URL, {
             waitUntil: "domcontentloaded"
         })
+        await this.page.waitForNetworkIdle({
+            concurrency: 2
+        })
         const screenshot = await this.page.screenshot()
         const blob = new Blob([Buffer.from(screenshot)], { type: "application/octet-stream" })
         Storage.pageScreen = blob
@@ -140,10 +144,8 @@ export class ChatGPTPage {
         await textarea.press("Enter")
 
         return new Promise<string>((resolve) => {
-            ChatGPTApp.event.once("message", (...args) => {
-                console.log(args);
-                
-                resolve(args[0])
+            ChatGPTApp.event.once("message", (message: string) => {
+                resolve(message)
                 this.#inProgress = false
             })
         })
@@ -172,4 +174,9 @@ export class ChatGPTPage {
 
     //     return this
     // }
+}
+
+export default {
+    ChatGPTPage,
+    ChatgptPageManager
 }

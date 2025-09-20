@@ -1,9 +1,8 @@
 import _puppeteer, { Browser as PuppeteerBrowser, LaunchOptions, Page } from "puppeteer"
 import _StealthPlugin from "puppeteer-extra-plugin-stealth"
 import { addExtra } from "puppeteer-extra"
-import { chromiumFlags } from "../common/flags";
-import { evalBool } from "../common/checks";
-import { generateId } from "../common/generate";
+import { chromiumFlags } from "../common/utils/flags";
+import { evalBool } from "../common/utils/checks";
 import { BrowserError } from "../common/errors";
 
 export const puppeteer = addExtra(_puppeteer);
@@ -40,10 +39,12 @@ export class Browser {
             throw new BrowserError("The browser is not yet initialized.")
         }
 
-        const id = generateId()
+        const id = crypto.randomUUID()
         const page = await this._pBrowser?.newPage()
         
         this._pages.set(id, page)
         return page
     }
 }
+
+export default Browser

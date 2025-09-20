@@ -1,8 +1,9 @@
 import { configDotenv } from "dotenv";
 import { Request, Response, Router } from "express";
+import logger from "../../../../../common/utils/logger";
 configDotenv();
 
-export const Verify_FBHandler = (req: Request, res: Response) => {
+export const verifyFBHandler = (req: Request, res: Response) => {
     let mode = req.query["hub.mode"];
     let token = req.query["hub.verify_token"];
     let challenge = req.query["hub.challenge"];
@@ -12,7 +13,7 @@ export const Verify_FBHandler = (req: Request, res: Response) => {
         // Check the mode and token sent is correct
         if (mode === "subscribe" && token === process.env.VERIFY_TOKEN) {
             // Respond with the challenge token from the request
-            console.log("WEBHOOK_VERIFIED");
+            logger.info("WEBHOOK_VERIFIED");
             res.status(200).send(challenge);
         } else {
             res.sendStatus(403);
@@ -21,3 +22,5 @@ export const Verify_FBHandler = (req: Request, res: Response) => {
         res.sendStatus(403);
     }
 };
+
+export default verifyFBHandler

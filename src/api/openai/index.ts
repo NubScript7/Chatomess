@@ -4,7 +4,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import { log } from "node:console";
 import EventEmitter from "node:events";
 import { initChatExtractor } from "./chatExtractor";
-import { evalBool } from "../../common/checks";
+import { evalBool } from "../../common/utils/checks";
+import logger from "../../common/utils/logger";
 config()
 
 const CONSTANTS = {
@@ -51,12 +52,12 @@ export class ChatGPTApp {
         const page = await chatgptManager.newPage()
         
         page.browser.on("disconnected", async () => {
-            console.log("saving cookies...");
+            logger.info("saving cookies...");
             
             const cookies = page.browser.cookies()
             await writeFile(CONSTANTS.CHATGPT_COOKIES_FILE, JSON.stringify(cookies))
             
-            console.log("cookies saved :D");
+            logger.info("cookies saved :D");
 
             process.exit(0)
         })
@@ -74,3 +75,6 @@ export class ChatGPTApp {
         this.#initilazed = true
     }
 }
+
+
+export default ChatGPTApp

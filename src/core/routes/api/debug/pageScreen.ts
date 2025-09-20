@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { Storage } from "../../../common/storage";
-import { ChatGPTApp } from "../../../api/openai";
+import { Storage } from "../../../../common/utils/storage";
+import { ChatGPTApp } from "../../../../api/openai";
 
-export const pageScreenViewer = async (req: Request, res: Response) => {
+export const pageScreenHandler = async (req: Request, res: Response) => {
     if(ChatGPTApp.initialized) {
         const blob = await Storage.pageScreen
 
@@ -15,3 +15,5 @@ export const pageScreenViewer = async (req: Request, res: Response) => {
         res.status(403).send("App not yet initialized")
     }
 }
+
+export default pageScreenHandler

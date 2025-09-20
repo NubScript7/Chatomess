@@ -1,24 +1,17 @@
 import { ChatGPTApp } from "./api/openai"
 import express from "express"
-import { configureRouting } from "./core/routing"
+import { routes } from "./core/routes"
+import { logger } from "./common/utils/logger"
 
 const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
-configureRouting(app)
-
-const init = async () => {
+app.listen(process.env.PORT || 3000, async () => {
+    logger.info(`Server is running on port ${process.env.PORT || 3000}`)
+    
     await ChatGPTApp.init()
-
-    ChatGPTApp.event.on("message", (msg: string) => {
-        console.log("New message from ChatGPT: ", msg);
-        
-    })
-}
-
-app.listen(process.env.PORT || 3000, () => {
-    console.log(`Server is running on port ${process.env.PORT || 3000}`)
-    init()
+    routes(app)
+    logger.info("Routes are now open!")
 })

@@ -11,3 +11,8 @@ export class MessengerPageError extends Error {
         this.name = this.constructor.name;
     }
 }
+
+export default {
+    BrowserError,
+    MessengerPageError
+}

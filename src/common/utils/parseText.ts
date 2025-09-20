@@ -51,3 +51,8 @@ export const extractData = (eventsArr: SSEEvent[]) => {
     }
     return _data;
 }
+
+export default {
+    parseSSE,
+    extractData
+}
