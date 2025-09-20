@@ -1,4 +1,4 @@
-import { body, checkSchema, Meta } from "express-validator";
+import { checkSchema } from "express-validator";
 import FBSendApi from "../../../../api/axios";
 
 type fbWebhookSchemaConfig = {
