@@ -10,7 +10,7 @@ export const initChatExtractor = async (page: Page) => {
     await page.exposeFunction('analyse', (data: string, id: string) => {
         console.log('Data received.')
         const chunks = parseSSE(data);
-        const txt = extractData(chunks);
+        const txt = extractData(chunks) || "No response detected.";
 
         ChatGPTApp.event.emit(`message`, txt, id);
     });

@@ -37,10 +37,10 @@ export const messageHandler = async (req: Request, res: Response) => {
 
     const { entry } = body
 
+    res.sendStatus(200);
+
     for(const { messaging } of entry) {
-        if(messaging && !Array.isArray(messaging)) {
-            return res.sendStatus(403)
-        }
+        if(messaging && !Array.isArray(messaging)) return;
 
         for(const { message, sender } of messaging) {
 
@@ -50,8 +50,7 @@ export const messageHandler = async (req: Request, res: Response) => {
 
             if(ChatGPTApp.initialized) {
                 if(ChatGPTApp.chatgpt.inProgress) {
-                    console.log("Waiting for previous request, ignoring this message...");
-                    return res.sendStatus(200)
+                    return console.log("Waiting for previous request, ignoring this message...");
                 }
 
                 await FBSendApi.sendMessage(sender.id, "Thinking...⏳")
@@ -59,9 +58,6 @@ export const messageHandler = async (req: Request, res: Response) => {
                 const result = await ChatGPTApp.chatgpt.typeQuestion(message.text)   
 
                 FBSendApi.sendMessageDynamic(sender.id, result)
-                res.sendStatus(200)
-            } else {
-                res.sendStatus(403)
             }
         }
     }
